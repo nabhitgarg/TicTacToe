@@ -5,16 +5,50 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tic-Tac-Toe</title>
   <style>
+    /* DEFAULT: LIGHT MODE (Original Blue, Teal, Pink Cosmic Glass Palette) */
     :root {
-      --glass-border: rgba(255, 255, 255, 0.35);
+      --bg-base: #0a0c14;
+      --mesh-1: rgba(88, 86, 214, 0.68);
+      --mesh-2: rgba(0, 199, 190, 0.58);
+      --mesh-3: rgba(255, 55, 95, 0.52);
+      --bg-grad: linear-gradient(135deg, #090d16 0%, #131b2e 50%, #0b101d 100%);
+      --shell-bg: linear-gradient(145deg, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0.08) 100%);
+      --glass-border: rgba(255, 255, 255, 0.36);
       --glass-shadow: 0 24px 60px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.6);
+      --sheen-color: rgba(255, 255, 255, 0.25);
+      --island-bg: rgba(12, 14, 22, 0.72);
       --text-primary: #ffffff;
-      --text-secondary: rgba(255, 255, 255, 0.72);
+      --text-secondary: rgba(255, 255, 255, 0.75);
       --accent-x: #5ac8fa;
       --accent-o: #ff6482;
       --accent-win: #30d158;
+      --cell-bg: linear-gradient(145deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.07) 100%);
+      --cell-hover: linear-gradient(145deg, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0.14) 100%);
+      --panel-bg: rgba(255, 255, 255, 0.1);
       --radius-outer: 38px;
       --radius-inner: 22px;
+    }
+
+    /* DARK MODE: Midnight Obsidian, Emerald, Amber & Electric Violet Glass */
+    body.dark-theme {
+      --bg-base: #030407;
+      --mesh-1: rgba(16, 185, 129, 0.28);
+      --mesh-2: rgba(139, 92, 246, 0.26);
+      --mesh-3: rgba(245, 158, 11, 0.22);
+      --bg-grad: linear-gradient(135deg, #020305 0%, #090b10 50%, #040508 100%);
+      --shell-bg: linear-gradient(145deg, rgba(22, 26, 36, 0.68) 0%, rgba(10, 12, 18, 0.58) 100%);
+      --glass-border: rgba(255, 255, 255, 0.16);
+      --glass-shadow: 0 28px 70px rgba(0, 0, 0, 0.75), inset 0 1px 1px rgba(255, 255, 255, 0.22);
+      --sheen-color: rgba(16, 185, 129, 0.16);
+      --island-bg: rgba(5, 7, 11, 0.88);
+      --text-primary: #f8fafc;
+      --text-secondary: rgba(203, 213, 225, 0.72);
+      --accent-x: #34d399;
+      --accent-o: #fbbf24;
+      --accent-win: #a78bfa;
+      --cell-bg: linear-gradient(145deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+      --cell-hover: linear-gradient(145deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+      --panel-bg: rgba(0, 0, 0, 0.32);
     }
 
     * {
@@ -30,11 +64,12 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #0a0c14;
+      background: var(--bg-base);
       color: var(--text-primary);
       overflow-x: hidden;
       padding: 20px;
       position: relative;
+      transition: background 0.45s ease, color 0.35s ease;
     }
 
     .wallpaper {
@@ -42,12 +77,13 @@
       inset: 0;
       z-index: -1;
       background:
-        radial-gradient(circle at 18% 22%, rgba(88, 86, 214, 0.65) 0%, transparent 45%),
-        radial-gradient(circle at 82% 28%, rgba(0, 199, 190, 0.55) 0%, transparent 48%),
-        radial-gradient(circle at 50% 85%, rgba(255, 55, 95, 0.5) 0%, transparent 52%),
-        linear-gradient(135deg, #090d16 0%, #131b2e 50%, #0b101d 100%);
+        radial-gradient(circle at 18% 22%, var(--mesh-1) 0%, transparent 45%),
+        radial-gradient(circle at 82% 28%, var(--mesh-2) 0%, transparent 48%),
+        radial-gradient(circle at 50% 85%, var(--mesh-3) 0%, transparent 52%),
+        var(--bg-grad);
       filter: saturate(135%);
       animation: meshShift 16s ease-in-out infinite alternate;
+      transition: background 0.45s ease;
     }
 
     @keyframes meshShift {
@@ -60,13 +96,14 @@
       max-width: 420px;
       padding: 26px;
       border-radius: var(--radius-outer);
-      background: linear-gradient(145deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.07) 100%);
+      background: var(--shell-bg);
       backdrop-filter: blur(36px) saturate(180%);
       -webkit-backdrop-filter: blur(36px) saturate(180%);
       border: 1px solid var(--glass-border);
       box-shadow: var(--glass-shadow);
       position: relative;
       overflow: hidden;
+      transition: background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
     }
 
     .liquid-shell::before {
@@ -75,7 +112,7 @@
       inset: 0;
       background: radial-gradient(
         420px circle at var(--mouse-x, 50%) var(--mouse-y, 20%),
-        rgba(255, 255, 255, 0.24),
+        var(--sheen-color),
         transparent 60%
       );
       pointer-events: none;
@@ -90,30 +127,69 @@
       gap: 16px;
     }
 
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
     .dynamic-island {
-      align-self: center;
+      flex: 1;
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 10px;
-      padding: 10px 20px;
+      padding: 10px 16px;
       border-radius: 999px;
-      background: rgba(12, 14, 22, 0.72);
+      background: var(--island-bg);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border: 1px solid rgba(255, 255, 255, 0.18);
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.25);
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       font-weight: 600;
       letter-spacing: 0.2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: background 0.35s ease;
     }
 
     .status-dot {
       width: 9px;
       height: 9px;
+      flex-shrink: 0;
       border-radius: 50%;
       background: var(--accent-x);
       box-shadow: 0 0 12px var(--accent-x);
       transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .theme-toggle {
+      width: 40px;
+      height: 40px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      border: 1px solid var(--glass-border);
+      background: var(--cell-bg);
+      color: var(--text-primary);
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+      transition: transform 0.2s ease, background 0.3s ease;
+    }
+
+    .theme-toggle:hover {
+      transform: scale(1.06);
+      background: var(--cell-hover);
+    }
+
+    .theme-toggle:active {
+      transform: scale(0.94);
     }
 
     .header {
@@ -124,7 +200,7 @@
       font-size: 1.55rem;
       font-weight: 700;
       letter-spacing: -0.4px;
-      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
     }
 
     .header p {
@@ -138,7 +214,7 @@
       grid-template-columns: 1fr 1fr;
       padding: 4px;
       border-radius: 16px;
-      background: rgba(0, 0, 0, 0.24);
+      background: rgba(0, 0, 0, 0.28);
       border: 1px solid rgba(255, 255, 255, 0.14);
     }
 
@@ -155,9 +231,9 @@
     }
 
     .seg-btn.active {
-      background: rgba(255, 255, 255, 0.22);
+      background: rgba(255, 255, 255, 0.2);
       color: #ffffff;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.4);
     }
 
     .name-inputs {
@@ -174,8 +250,8 @@
       width: 100%;
       padding: 10px 12px;
       border-radius: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.24);
-      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      background: var(--panel-bg);
       color: #ffffff;
       font-size: 0.85rem;
       font-weight: 600;
@@ -184,12 +260,12 @@
     }
 
     .glass-input::placeholder {
-      color: rgba(255, 255, 255, 0.5);
+      color: rgba(255, 255, 255, 0.48);
     }
 
     .glass-input:focus {
-      border-color: rgba(255, 255, 255, 0.6);
-      background: rgba(255, 255, 255, 0.18);
+      border-color: var(--accent-x);
+      background: rgba(255, 255, 255, 0.16);
     }
 
     .scoreboard {
@@ -201,10 +277,10 @@
     .score-pill {
       padding: 10px 8px;
       border-radius: 18px;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: var(--panel-bg);
+      border: 1px solid rgba(255, 255, 255, 0.16);
       text-align: center;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
       overflow: hidden;
     }
 
@@ -231,17 +307,17 @@
       gap: 12px;
       padding: 12px;
       border-radius: 28px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      box-shadow: inset 0 2px 12px rgba(0, 0, 0, 0.18);
+      background: var(--panel-bg);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: inset 0 2px 12px rgba(0, 0, 0, 0.22);
     }
 
     .cell {
       aspect-ratio: 1 / 1;
       border-radius: var(--radius-inner);
-      border: 1px solid rgba(255, 255, 255, 0.28);
-      background: linear-gradient(145deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.06) 100%);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.16), inset 0 1px 1px rgba(255, 255, 255, 0.5);
+      border: 1px solid var(--glass-border);
+      background: var(--cell-bg);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.42);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -253,7 +329,7 @@
     }
 
     .cell:hover:not(.taken):not(.locked) {
-      background: linear-gradient(145deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.12) 100%);
+      background: var(--cell-hover);
       transform: translateY(-2px) scale(1.02);
     }
 
@@ -263,20 +339,20 @@
 
     .cell.x-mark {
       color: var(--accent-x);
-      text-shadow: 0 0 22px rgba(90, 200, 250, 0.65);
+      text-shadow: 0 0 22px var(--accent-x);
       animation: popIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     .cell.o-mark {
       color: var(--accent-o);
-      text-shadow: 0 0 22px rgba(255, 100, 130, 0.65);
+      text-shadow: 0 0 22px var(--accent-o);
       animation: popIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     .cell.win-cell {
-      background: linear-gradient(145deg, rgba(48, 209, 88, 0.38) 0%, rgba(48, 209, 88, 0.16) 100%);
-      border-color: rgba(48, 209, 88, 0.8);
-      box-shadow: 0 0 26px rgba(48, 209, 88, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.7);
+      background: linear-gradient(145deg, rgba(48, 209, 88, 0.35) 0%, rgba(48, 209, 88, 0.14) 100%);
+      border-color: var(--accent-win);
+      box-shadow: 0 0 26px var(--accent-win), inset 0 1px 1px rgba(255, 255, 255, 0.65);
       transform: scale(1.04);
     }
 
@@ -294,18 +370,18 @@
     .glass-btn {
       padding: 13px 16px;
       border-radius: 18px;
-      border: 1px solid rgba(255, 255, 255, 0.32);
-      background: linear-gradient(145deg, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0.1) 100%);
+      border: 1px solid var(--glass-border);
+      background: var(--cell-bg);
       color: #ffffff;
       font-size: 0.9rem;
       font-weight: 600;
       cursor: pointer;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.42);
       transition: all 0.2s ease;
     }
 
     .glass-btn:hover {
-      background: linear-gradient(145deg, rgba(255, 255, 255, 0.34) 0%, rgba(255, 255, 255, 0.16) 100%);
+      background: var(--cell-hover);
       transform: translateY(-1px);
     }
 
@@ -316,7 +392,7 @@
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(5, 8, 15, 0.68);
+      background: rgba(3, 5, 10, 0.72);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       display: none;
@@ -344,9 +420,9 @@
       flex-direction: column;
       border-radius: 30px;
       padding: 22px;
-      background: linear-gradient(145deg, rgba(35, 42, 64, 0.85) 0%, rgba(18, 22, 34, 0.92) 100%);
-      border: 1px solid rgba(255, 255, 255, 0.32);
-      box-shadow: 0 28px 70px rgba(0, 0, 0, 0.55), inset 0 1px 1px rgba(255, 255, 255, 0.45);
+      background: linear-gradient(145deg, rgba(28, 34, 52, 0.9) 0%, rgba(14, 17, 26, 0.95) 100%);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 28px 70px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.35);
     }
 
     .win-modal-card {
@@ -417,9 +493,12 @@
 
   <main class="liquid-shell" id="liquidShell">
     <div class="content">
-      <div class="dynamic-island">
-        <span class="status-dot" id="statusDot"></span>
-        <span id="statusText">Player X's Turn</span>
+      <div class="top-bar">
+        <div class="dynamic-island">
+          <span class="status-dot" id="statusDot"></span>
+          <span id="statusText">Player X's Turn</span>
+        </div>
+        <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()" title="Switch Light / Dark Theme" aria-label="Switch Theme">🌙</button>
       </div>
 
       <div class="header">
@@ -523,6 +602,14 @@ int isBoardFull() {
     let winningCells = [];
     let scores = { X: 0, O: 0, D: 0 };
     let playerNames = { X: 'Player X', O: 'Player O' };
+    let isDarkTheme = false;
+
+    function toggleTheme() {
+      isDarkTheme = !isDarkTheme;
+      document.body.classList.toggle('dark-theme', isDarkTheme);
+      document.getElementById('themeBtn').textContent = isDarkTheme ? '☀️' : '🌙';
+      playGlassTap(isDarkTheme ? 420 : 620);
+    }
 
     function getDisplayName(symbol) {
       if (gameMode === 'ai') {
